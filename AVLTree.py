@@ -185,6 +185,19 @@ class AVLTree(object):
 	@returns: the value corresponding to key.
 	"""
 	def search(self, key):
+		root = AVLNode(self.root)
+		if(root.get_key == key):
+			return root.get_value
+		if((not root.right.is_real_node) and (not root.left.is_real_node)):
+			return None
+		if(key < root.get_key):
+			if(not root.left.is_real_node):
+				return None
+			return AVLTree(root.get_left).search(key)
+		else:
+			if(not root.right.is_real_node):
+				return None
+			return AVLTree(root.get_right).search(key)
 		return None
 
 
