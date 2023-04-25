@@ -284,7 +284,16 @@ class AVLTree(object):
 	@returns: the rank of node in self
 	"""
 	def rank(self, node):
-		return None
+		root = AVLNode(self.root)
+		node = AVLNode(node)
+		if(not node.is_real_node):
+			return 0
+		
+		if(node.get_value<root.get_value):
+			return(1+AVLTree.rank(root.get_right,node)+AVLTree.rank(root.get_left,node))
+		else:
+			return(AVLTree.rank(root.get_right,node)+AVLTree.rank(root.get_left,node))
+
 
 
 	"""finds the i'th smallest item (according to keys) in self
