@@ -231,7 +231,13 @@ class AVLTree(object):
 	@returns: a sorted list according to key of touples (key, value) representing the data structure
 	"""
 	def avl_to_array(self):
-		return None
+		res = []
+		root = AVLNode(self.root)
+		if(root.is_real_node):
+			res=self.avl_to_array(root.get_left)
+			res.append((root.get_key,root.get_value))
+			res+=res+self.avl_to_array(root.get_right)
+		return res
 
 
 	"""returns the number of items in dictionary 
@@ -240,7 +246,10 @@ class AVLTree(object):
 	@returns: the number of items in dictionary 
 	"""
 	def size(self):
-		return self.get_root().get_size()	
+		root = AVLNode(self.root)
+		if(not root.is_real_node):
+			return 0
+		return(AVLTree.size(root.get_left)+AVLTree.size(root.get_right)+1)
 
 	
 	"""splits the dictionary at a given node
@@ -313,4 +322,7 @@ class AVLTree(object):
 	@returns: the root, None if the dictionary is empty
 	"""
 	def get_root(self):
+		if(self!=None):
+			root = AVLNode(self.root)
+			return root
 		return None
