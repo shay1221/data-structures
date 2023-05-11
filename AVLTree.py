@@ -24,6 +24,7 @@ class AVLNode(object):
 		self.parent = None
 		self.height = -1
 		self.size = 0
+		self.virtual = False
 		
 
 	"""returns the key
@@ -76,7 +77,7 @@ class AVLNode(object):
 	@returns: the height of self, -1 if the node is virtual
 	"""
 	def get_height(self):
-		return -1
+		return self.height
 
 
 	"""returns the size of the subtree
@@ -85,7 +86,7 @@ class AVLNode(object):
 	@returns: the size of the subtree of self, 0 if the node is virtual
 	"""
 	def get_size(self):
-		return 0
+		return self.size
 
 
 	"""sets key
@@ -157,7 +158,17 @@ class AVLNode(object):
 	@returns: False if self is a virtual node, True otherwise.
 	"""
 	def is_real_node(self):
-		return self.is_real_node
+		return self.virtual
+	
+	"""owner: Shir
+	computes the BF of a node
+
+	@rtype: int
+	@returns: BF := self.left.hight - self.right.hight
+	"""
+	def compute_BF(self):
+		return AVLNode(self.get_left).get_height - AVLNode(self.get_right).get_height
+
 
 
 
@@ -211,9 +222,48 @@ class AVLTree(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def insert(self, key, val):
+		tup = (self.naive_insert(key, val))[0]
+		y = tup[0]
+		prev_height = tup[1]
+		while(y.is_real_node):
+			bf = y.compute_BF()
+			if(abs(bf) < 2 and y.get_height = )
+
 		return -1
+	
+	
+	"""owner: Shir
+	insert BTS and returns the parent and the height before insertion
 
-
+	@type key: int
+	@pre: key currently does not appear in the dictionary
+	@param key: key of item that is to be inserted to self
+	@type val: any
+	@param val: the value of the item
+	@rtype: tuple AVLNode, int
+	@returns: the parent of the inserted node and the height of it before insertion
+	"""
+	
+	def naive_insert(self, key, val):
+		y = None
+		x = AVLNode(self.root)
+		while(x.is_real_node):
+			y = x
+			if(key < x.get_key):
+				x = AVLNode(x.get_right)
+			else:
+				x = AVLNode(x.get_left)
+		z = AVLNode(key, val)
+		height = y.get_height
+		z.set_parent = y
+		if(not y.is_real_node):
+			self.root = z
+		elif(key < y.get_key):
+			y.set_left = z
+		else:
+			y.set_right = z
+		return y, height
+	
 	"""deletes node from the dictionary
 
 	@type node: AVLNode
