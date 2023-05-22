@@ -425,7 +425,7 @@ class AVLTree(object):
 
 			else:
 				node_parent.set_left(self.virtual)
-				node_parent.set_height(max(0, 1 + node_parent().get_right()))
+				node_parent.set_height(max(0, 1 + node_parent.get_right().get_height()))
 			#height changes before rotation
 			h_before = node_parent.get_height()
 			balances += self.fix_height_after_insertion(node_parent, 1)
