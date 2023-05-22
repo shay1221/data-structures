@@ -551,14 +551,15 @@ class AVLTree(object):
 	@rtype: list
 	@returns: a sorted list according to key of touples (key, value) representing the data structure
 	"""
-	def avl_to_array(self):
+	def avl_to_array_rec(self, node):
 		res = []
-		root = AVLNode(self.get_root)
-		if(root.is_real_node):
-			res=self.avl_to_array(root.get_left)
-			res.append((root.get_key,root.get_value))
-			res+=res+self.avl_to_array(root.get_right)
+	
+		if(node.is_real_node()):
+			res=self.avl_to_array_rec(node.get_left())
+			res.append((node.get_key(),node.get_value()))
+			res+=self.avl_to_array_rec(node.get_right())
 		return res
+	
 
 	"""returns the number of items in dictionary 
 
