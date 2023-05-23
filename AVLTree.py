@@ -166,6 +166,29 @@ class AVLNode(object):
 	"""
 	def is_real_node(self):
 		return self.size!=0
+	
+	def is_virtual(self):
+		return self.size==0
+	
+	def is_leaf(self):
+		return (self.left == None and self.right==None)
+	
+	""""
+	@rtype: int
+	@returns: BF := self.left.hight - self.right.hight
+	"""
+	def get_bf(self):
+		if(self.get_left()==None and self.get_left()==None):
+			return 0
+		
+		if(self.get_left()==None):
+			return self.get_right().get_height()
+		
+		if(self.get_right()==None):
+			return self.get_left().get_height()
+		
+		return self.get_left().get_height()-self.get_right().get_height()
+
 
 
 """
@@ -216,7 +239,7 @@ class AVLTree(object):
 		return self.rec_search( self.get_root(), key)
 		
 	
-	def compute_bf(self, node):
+	def compute_bf(self, node:AVLNode):
 		return  node.get_left().get_height() - node.get_right().get_height()
 
 	"""inserts val at position i in the dictionary
@@ -231,6 +254,7 @@ class AVLTree(object):
 	"""
 	def insert(self, key, val):
 		res = 0
+		#print(self.get_root())
 		res += self.insert_bst(key, val)
 		return res
 
@@ -275,7 +299,8 @@ class AVLTree(object):
 				
 				return balances + self.rotation(y)
 		return balances
-	def rotation(self, node):
+	
+	def rotation(self, node : AVLNode):
 		balances = 0
 		bf = self.compute_bf(node)
 		
@@ -375,7 +400,7 @@ class AVLTree(object):
 	@rtype: int
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
-	def delete_bst(self, node):
+	def delete_bst(self, node : AVLNode):
 		balances = 0
 		node_parent = node.get_parent()
 		#node is a leaf ;updating the height
@@ -390,7 +415,7 @@ class AVLTree(object):
 
 			else:
 				node_parent.set_left(self.virtual)
-				node_parent.set_height(max(0, 1 + node_parent().get_right()))
+				node_parent.set_height(max(0, 1 + node_parent().right))
 			#height changes before rotation
 			balances += self.fix_height_after_insertion(node_parent, 1)
 		#node had only right son	
