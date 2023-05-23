@@ -28,7 +28,7 @@ def successors_check(t: AVLTree, keys: list):
 
     while m is not None:
         t_keys.append(m.get_key())
-        m = t.get_successor(m)
+        m = t.successor(m)
 
     if t_keys != keys:
         print("Wrong values")
@@ -62,9 +62,7 @@ def inorder_walk_check(t: AVLTree, keys):
 
     keys = sorted(keys.copy())
     t_keys = []
-    print("Here")
     def rec(node, lst):
-        print(1)
         if not node.is_real_node():
             has_error = (node.get_left() is not None) or (node.get_right() is not None)
             if has_error:
@@ -80,10 +78,7 @@ def inorder_walk_check(t: AVLTree, keys):
         has_error = le or re
 
         if node.get_size() != ls + rs + 1:
-            print("size of node:" , node.get_size())
-            print(f"Wrong size of node {key}.")
             has_error = True
-        print("SSS: ",node.get_size())
         if node.get_height() != max(lh, rh) + 1:
             print(f"Wrong height of node {key}.")
             has_error = True
@@ -93,6 +88,7 @@ def inorder_walk_check(t: AVLTree, keys):
             print(f"BF of node {key} is {bf}.")
             has_error = True
         if node.get_bf() != bf:
+            print("bf: ", node.get_bf(), "height:" , node.get_height())
             print(f"Wrong BF of node {key}.")
             has_error = True
 
@@ -173,7 +169,7 @@ def run(tests, val_range=100, t_size=2, tester=inorder_walk_check):
     print(f"\nDone {tests} tests with {err_cnt} errors and 0 exceptions.")
 
 
-def debug(keys, new_keys, tester=successors_check):
+def debug(keys, new_keys, tester=inorder_walk_check):
     t = AVLTree()
 
     for i, key in enumerate(keys):
@@ -187,10 +183,13 @@ def debug(keys, new_keys, tester=successors_check):
             print_error(keys, new_keys, "checking after inserted", key)
 
     for i, key in enumerate(new_keys):
+        if key == 1:
+            print("Here")
         try:
             t.delete(t.search(key))
-        except Exception:
+        except Exception as e:
             print_error(keys, new_keys, "deleting", key)
+            print(e)
             return t
 
         if not tester(t, new_keys[i + 1:]):
@@ -201,7 +200,8 @@ def debug(keys, new_keys, tester=successors_check):
 
 if __name__ == '__main__':
     # You should implement get_bf() in AVLNode to run:
-    run(1000, 1000, 500, inorder_walk_check)
+    # run(1, 100, 5, inorder_walk_check)
+    debug([1, 0, 42, 46, 21], [21, 46, 1, 0, 42])
 
     # To run the second test you should implement get_successor(node) in AVLTree.
     # run(1000, 1000, 500, successors_check)

@@ -13,14 +13,11 @@ def catch(*_):
 
         for key in keys:
             t.insert(key, 0)
-        print("good insert")
         for key in new_keys:
-            print(key)
-            print(t.avl_to_array())
-            t.delete(t.search(key))
             try:
                 #t.delete(t.search(key))
-                print(key)
+                t.delete(t.search(key))
+
 
             except Exception:
                 print(keys)

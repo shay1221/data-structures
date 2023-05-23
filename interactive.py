@@ -1,5 +1,4 @@
-from AVLTree import AVLTree, AVLNode
-
+from AVLTrees import AVLTree, AVLNode
 
 def print_tree(t: AVLTree):
     out = ""
@@ -12,7 +11,7 @@ def print_tree(t: AVLTree):
 def t_repr(n: AVLNode):
     n_repr = f"{n.key},{n.get_bf()},{n.get_height()}"
 
-    if n.is_virtual:
+    if not n.is_real_node():
         return ["#"]
 
     if n.is_leaf():
