@@ -450,7 +450,7 @@ class AVLTree(object):
 
 			else:
 				node_parent.set_left(self.virtual)
-				node_parent.set_height(max(0, 1 + node_parent().get_right()))
+				node_parent.set_height(max(0, 1 + node_parent.get_right().get_height()))
 			#height changes before rotation
 			h_before = node_parent.get_height()
 			balances += self.fix_height_after_insertion(node_parent, 1)
@@ -576,14 +576,15 @@ class AVLTree(object):
 	@rtype: list
 	@returns: a sorted list according to key of touples (key, value) representing the data structure
 	"""
-	def avl_to_array(self):
+	def avl_to_array_rec(self, node):
 		res = []
-		root = AVLNode(self.get_root)
-		if(root.is_real_node):
-			res=self.avl_to_array(root.get_left)
-			res.append((root.get_key,root.get_value))
-			res+=res+self.avl_to_array(root.get_right)
+	
+		if(node.is_real_node()):
+			res=self.avl_to_array_rec(node.get_left())
+			res.append((node.get_key(),node.get_value()))
+			res+=self.avl_to_array_rec(node.get_right())
 		return res
+	
 
 	"""returns the number of items in dictionary 
 
