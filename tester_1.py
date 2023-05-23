@@ -185,12 +185,8 @@ def debug(keys, new_keys, tester=inorder_walk_check):
     for i, key in enumerate(new_keys):
         if key == 1:
             print("Here")
-        try:
-            t.delete(t.search(key))
-        except Exception as e:
-            print_error(keys, new_keys, "deleting", key)
-            print(e)
-            return t
+        t.delete(t.search(key))
+
 
         if not tester(t, new_keys[i + 1:]):
             print_error(keys, new_keys, "checking after deleted", key)

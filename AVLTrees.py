@@ -435,7 +435,6 @@ class AVLTree(object):
 	"""
 	def delete_bst(self, node : AVLNode):
 		#node is a leaf ;updating the height
-		print("leaf: ", node.key)
 		if(not node.left.is_real_node() and not node.right.is_real_node()):
 			if(node.parent is None): #root
 				self.root = None
@@ -483,15 +482,35 @@ class AVLTree(object):
 		#node has 2 sons
 		else:  #node.right.is_real_node() and node.left.is_real_node()
 			max_after = self.successor(node)
-			print("node key: ", node.key, " suc key: ", max_after.key)
-			if node.left.get_key == max_after.get_key:
+			if node.parent is not None:
+				if node.parent.key == max_after.key:
+					node , max_after = max_after, node
+			else:
+				self.root = max_after
+			if node.left.key== max_after.key:
+				node_right = node.parent is not None and node.parent.right.key == node.key
+				node.size, max_after.size = max_after.size , node.size
+				node.height, max_after.height= max_after.height, node.height
+				r = node.left.right
+				l = node.left.left
 				node.right.parent = max_after
 				node.left.left = node
 				node.left.right = node.right
-				node.left.parent = node.parent
-				node.parent = node.left
+				node.right = r
+				node.left = l
+				r.parent = node
+				l.parent = node
+				if(max_after.parent != None):
+					if node_right:
+						max_after.parent.right = max_after
+					else:
+						max_after.parent.left = max_after
+                        
 			
-			elif node.right.get_key == max_after.get_key:
+			elif node.right.key == max_after.key: #right son
+				node_right = node.parent is not None and node.parent.right.key == node.key
+				node.size, max_after.size = max_after.size , node.size
+				node.height, max_after.height= max_after.height, node.height
 				r = node.right.right
 				l = node.right.left
 				node.left.parent = max_after
@@ -501,26 +520,48 @@ class AVLTree(object):
 				node.parent = node.right
 				node.right = r
 				node.left = l
+				r.parent = node
+				l.parent = node
+				if(max_after.parent != None):
+					if node_right:
+						max_after.parent.right = max_after
+					else:
+						max_after.parent.left = max_after
 			
 			else:
-				node.right.parent = max_after
-				node.left.parent = max_after
-				if node.parent:
-					if node.parent.key>node.key:
-						node.parent.right = max_after
+				if(max_after.parent != None):
+					max_right = max_after.parent.right.key == max_after.key
+				else:
+					max_right = False
+				if(node.parent != None):
+					node_right = node.parent.right.key == node.key
+				else:
+					node_right = False
+                
+				    
+				node.right , max_after.right = max_after.right, node.right
+				node.left , max_after.left = max_after.left, node.left
+				node.parent, max_after.parent = max_after.parent, node.parent
+				node.right.parent = node
+				node.left.parent = node
+				max_after.right.parent = max_after
+				max_after.left.parent = max_after
+				max_after.size , node.size = node.size,  max_after.size 
+				max_after.height , node.height = node.height,  max_after.height 
+				if node.parent != None:
+					if max_right:
+						node.parent.right = node
 					else:
-						node.parent.left = max_after
-				max_after.right.parent = node
-				max_after.left.parent = node
-				if max_after.parent:
-					if max_after.parent.key>max_after.key:
+						node.parent.left = node
+				if max_after != None:
+					if node_right:
 						max_after.parent.right = node
 					else:
 						max_after.parent.left = node
-
+				
+				
+				
 			self.delete_bst(node)
-			node.key = max_after.key
-			node.value = max_after.value
 			return max_after
 		
 		return node
@@ -532,11 +573,8 @@ class AVLTree(object):
 
 		while node.parent != None and node.parent.is_real_node():
 			node = node.parent
-			print("here", node.get_key())
 			node.NodeUpdating()
-			print("and here")
 			i, node = self.fix_height_after_insertion(node)
-			print("and here")
 			balances += i
 		
 
@@ -580,7 +618,7 @@ class AVLTree(object):
 	
 
 	def successor(self,node : AVLNode):
-		if(node.left.is_real_node()):
+		if(node.right.is_real_node()):
 			y = node.right
 			x = None
 			while(y.is_real_node()):
@@ -590,7 +628,7 @@ class AVLTree(object):
 		else:
 			y = node.parent
 			x = node
-			while(x is y.right and y is not None):
+			while(y is not None and x is y.right):
 				x = x.parent
 				y = y.parent
 			return y
