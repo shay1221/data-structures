@@ -403,8 +403,6 @@ class AVLTree(object):
 		x = y
 		h1 = y.get_height()
 		while(y is not None):
-			if(node.get_key == 2):
-				print(y)
 
 			l1 = y.get_height()
 			y.NodeUpdating(False)
