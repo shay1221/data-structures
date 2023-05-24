@@ -1,6 +1,6 @@
 import random
 
-from AVLTrees import *
+from AVLTree import *
 
 
 def catch(*_):

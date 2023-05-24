@@ -333,71 +333,89 @@ class AVLTree(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	#O(log(n))
-	def insert(self, key, val, max = False):
-		z = AVLNode(key, val, True)
-		if(self.root is None or not self.root.is_real_node()):
-			self.root = z
-			self.root.height = 0
-			self.root.size = 1
-			self.max_node = self.get_root()
-			return 0
-		
-		if max:
-			node = self.max_node
-			while True:
-				if not node.get_parent() is None and node.parent.get_key()> key:
-						node = node.get_parent()
-				else:
-					break
-				
-		else:
-			node = self.root
-		
-		while True:
-			assert key != node.key
-			if node.get_key() < key:
-				if node.right.is_real_node():
-					node = node.right
-				else:
-					node.right = z
-					if key>self.max_node.get_key():
-						self.max_node = node.right
-					node.right.parent = node
-					node.right.size = 1
-					node.right.size = 0
-					node.NodeUpdating()
-					node = node.right
-					break
-			else: #node.get_key() > key
-				if key<node.key:
-					if node.left.is_real_node():
-						node = node.left
-					else:
-						node.set_left(z)
-						node.get_left().set_parent(node)
-						node.left.size = 1
-						node.left.height = 0
-						node = node.left
-						break
-
-		if key > self.max_node.get_key():
-			self.max_node = node
-		
-		last_node = node
+	def insert(self, key, val):
 		ret = 0
-		while(not node.parent is None):
-			node = node.parent
-			node.NodeUpdating()
-			i, node = self.fix_height_after_insertion(node)
-			ret += i
-		
-		last_node.NodeUpdating()
+		z = AVLNode(key, val, True)
+		t =  self.insert_bst(z) 
+		ret += t[0]
+		height_changed = t[1] 
+		y = z.get_parent()
+		while(y is not None):
+			bf = y.get_left().get_height() -  y.get_right().get_height()
+			if(abs(bf)<2 and not height_changed):
+				return ret
+			elif(abs(bf)<2):
+				y = y.get_parent()
+			else:
+				
+				return ret + self.rotate(y)
+			
+	
+	def rotate(self, node):
+		ret = 0
+		bf = node.get_left().get_height() - node.get_right().get_height()
+		if(bf == 2):
+			
+			#b = AVLNode.get_Height(node.get_left().get_left()) - AVLNode.get_Height(node.get_left().get_right())
+			b = self.compute_bf(node.get_left())
+			if(b == 1):
+				self.right_rotation(node)
+				ret += 1
+			else:
+				self.left_rotation(node.get_left())
+				self.right_rotation(node)
+				ret += 2
+
+		else:
+			#b = AVLNode.get_Height(node.get_right().get_left()) - AVLNode.get_Height(node.get_right().get_right())
+			b = self.compute_bf(node.get_right())
+			if(b == 1):
+				self.right_rotation(node.get_right())
+				self.left_rotation(node)
+				ret += 2
+			else:
+				self.left_rotation(node)
+				ret += 1
 		return ret
+	def insert_bst(self, node):
+		node_copy = node
+		ret = 0
+		if(self.get_root() is None):
+			self.set_root(node)
+			return ret, False
+		y = None
+		x = self.get_root()
+		while(x.is_real_node() and x is not None):
+			y = x
+			if(node.get_key() < x.get_key()):
+				x = x.get_left()
+			else:
+				x = x.get_right()
+		node.set_parent(y)
+		if(y is None):
+			self.set_root(node)
+		elif(node.get_key() < y.get_key()):
+			y.set_left(node)
+		else:
+			y.set_right(node)
 
-
+		y = node.get_parent()
+		x = y
+		h1 = y.get_height()
+		while(y.get_parent() is not None):
+			l1 = y.get_height()
+			y.NodeUpdating()
+			l2 = y.get_height()
+			if(not l1 == l2):
+				ret+=1
+			y = y.get_parent()
+		h2 = x.get_height()
+		height_changed = not h1 == h2
+		return ret, height_changed
+	
 	#O(1)
 	def right_rotation(self, node : AVLNode):
-		
+
 		n = node.left
 		p = node.parent
 		n.right , node.left = node, n.right
@@ -409,12 +427,11 @@ class AVLTree(object):
 			node.left.parent = node
 		n.parent = p
 		node.parent = n
-
-		
-		n.height = (1+max(AVLTree.get_Height(n.left),AVLTree.get_Height(n.right)))
-		node.height = (1+max(AVLTree.get_Height(node.left),AVLTree.get_Height(node.right)))
-		node.size = (1+AVLTree.size_of_node(node.left) + AVLTree.size_of_node(node.right) )
-		n.size = (1+AVLTree.size_of_node(n.left)  + AVLTree.size_of_node(n.right) )
+		y = node
+		while(y.get_parent() is not None):
+			
+			y.NodeUpdating()
+			y = y.get_parent()
 		
 		if p is None:
 			self.root = n
@@ -424,33 +441,33 @@ class AVLTree(object):
 			p.right = n
 		
 		return n
+	
 
 	#O(1)
-	def left_rotation(self, node):
+	def left_rotation(self, node : AVLNode):
 		n = node.right
-		p = node.right
+		p = node.parent
 		n.left , node.right = node, n.left
 		if n.left:
-			n.left.parent = n
+			n.left.parent = node
+		else:
+			pass
 		if n.right:
 			node.right.parent = node
-		
-		
 		n.parent = p
 		node.parent = n
-
-		
-		n.height = (1+max(AVLTree.get_Height(n.left),AVLTree.get_Height(n.right)))
-		node.height = (1+max(AVLTree.get_Height(node.left),AVLTree.get_Height(node.right)))
-		node.size = (1+AVLTree.size_of_node(node.left) + AVLTree.size_of_node(node.right) )
-		n.size = (1+AVLTree.size_of_node(n.left)  + AVLTree.size_of_node(n.right) )
+		y = node
+		while(y.get_parent() is not None):
+			
+			y.NodeUpdating()
+			y = y.get_parent()
 		
 		if p is None:
 			self.root = n
-		elif p.key>n.key:
-			p.left = n
-		else:
+		elif p.key<n.key:
 			p.right = n
+		else:
+			p.left = n
 		
 		return n
 	#O(log(n))
