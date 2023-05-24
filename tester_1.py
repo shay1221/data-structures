@@ -1,6 +1,6 @@
 import random
 
-from AVLTree import *
+from AVLTree4 import *
 
 
 def successors_check(t: AVLTree, keys: list):
@@ -173,11 +173,8 @@ def debug(keys, new_keys, tester=inorder_walk_check):
     t = AVLTree()
 
     for i, key in enumerate(keys):
-        try:
-            t.insert(key, 0)
-        except Exception:
-            print_error(keys, new_keys, "inserting", key)
-            return t
+        
+        t.insert(key, 0)
 
         if not tester(t, keys[:i + 1]):
             print_error(keys, new_keys, "checking after inserted", key)
@@ -194,7 +191,8 @@ def debug(keys, new_keys, tester=inorder_walk_check):
 
 if __name__ == '__main__':
     # You should implement get_bf() in AVLNode to run:
-    run(3, 100, 5, inorder_walk_check)
+    #run(1, 100, 5, inorder_walk_check)
+    debug([1, 3, 2, 5, 4], [5, 2, 1, 4, 3])
 
     # To run the second test you should implement get_successor(node) in AVLTree.
     # run(1000, 1000, 500, successors_check)
