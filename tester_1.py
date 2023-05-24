@@ -183,8 +183,6 @@ def debug(keys, new_keys, tester=inorder_walk_check):
             print_error(keys, new_keys, "checking after inserted", key)
 
     for i, key in enumerate(new_keys):
-        if key == 1:
-            print("Here")
         t.delete(t.search(key))
 
 
@@ -196,8 +194,8 @@ def debug(keys, new_keys, tester=inorder_walk_check):
 
 if __name__ == '__main__':
     # You should implement get_bf() in AVLNode to run:
-    # run(1, 100, 5, inorder_walk_check)
-    debug([1, 0, 42, 46, 21], [21, 46, 1, 0, 42])
+    run(1, 100, 5, inorder_walk_check)
+    debug([24, 2, 91, 17, 24], [91, 66, 2, 17, 24])
 
     # To run the second test you should implement get_successor(node) in AVLTree.
     # run(1000, 1000, 500, successors_check)
