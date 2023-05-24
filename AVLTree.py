@@ -211,13 +211,13 @@ class AVLNode(object):
 
 	@rtype: None
 	"""
-	#O(1)
-	def NodeUpdating(self):
+	#O(log(n))
+	def NodeUpdating(self, up = True):
 		self.set_height(1+max(self.left.height,self.right.height))
 		self.set_size(self.get_left().get_size()+self.get_right().get_size() + 1)
-
-		if self.get_parent() is not None:
-			self.parent.NodeUpdating()
+		if up:
+			if self.get_parent() is not None:
+				self.parent.NodeUpdating()
 	""""
 	@rtype: int
 	@returns: BF := self.left.hight - self.right.hight
@@ -402,9 +402,12 @@ class AVLTree(object):
 		y = node.get_parent()
 		x = y
 		h1 = y.get_height()
-		while(y.get_parent() is not None):
+		while(y is not None):
+			if(node.get_key == 2):
+				print(y)
+
 			l1 = y.get_height()
-			y.NodeUpdating()
+			y.NodeUpdating(False)
 			l2 = y.get_height()
 			if(not l1 == l2):
 				ret+=1
@@ -430,7 +433,7 @@ class AVLTree(object):
 		y = node
 		while(y.get_parent() is not None):
 			
-			y.NodeUpdating()
+			y.NodeUpdating(False)
 			y = y.get_parent()
 		
 		if p is None:
@@ -459,7 +462,7 @@ class AVLTree(object):
 		y = node
 		while(y.get_parent() is not None):
 			
-			y.NodeUpdating()
+			y.NodeUpdating(False)
 			y = y.get_parent()
 		
 		if p is None:

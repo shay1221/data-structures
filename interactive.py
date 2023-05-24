@@ -1,4 +1,4 @@
-from AVLTrees import AVLTree, AVLNode
+from AVLTree import AVLTree, AVLNode
 
 def print_tree(t: AVLTree):
     out = ""
